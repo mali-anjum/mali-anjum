@@ -75,7 +75,7 @@ I'm a physics graduate (BS Physics, BZU Multan, CGPA 3.61) who works across the 
   </tr>
 </table>
 
-**Also here:** [Computational-Physics](https://github.com/mali-anjum/Computational-Physics) (C++) · [blind-75-leetcode](https://github.com/mali-anjum/blind-75-leetcode) · [my-portfolio-page](https://github.com/mali-anjum/my-portfolio-page)
+**Also here:** [Computational-Physics](https://github.com/mali-anjum/Computational-Physics) (C++) · [blind-75-leetcode](https://github.com/mali-anjum/blind-75-leetcode)
 
 <br>
 

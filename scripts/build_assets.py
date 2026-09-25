@@ -28,17 +28,6 @@ HERO = dict(
     footer="Multan, PK  ·  alianjum.vercel.app",
 )
 
-# Bottom (L0) to top (L6).
-LAYERS = [
-    ("Physics", "BS Physics, Bahauddin Zakariya University", "CGPA 3.61"),
-    ("Devices", "2D MOSFET TCAD: Poisson + drift-diffusion", "V_TH · I_ON/I_OFF · SS"),
-    ("Circuits", "CMOS ring oscillator & current-starved VCO", "109× tuning range"),
-    ("Chips", "Edge-AI MAC accelerator, RTL → GDSII on SKY130", "−62.8% energy"),
-    ("Systems", "Solar-powered smart irrigation on ATmega328P", "−80% water use"),
-    ("Software", "Next.js, React Native, FastAPI, .NET, Supabase", "web + mobile, shipped"),
-    ("Agents", "LangGraph RAG, autonomous scheduling, work agents", "LangChain · LangGraph"),
-]
-
 CARDS = {
     "asic": dict(
         label="DIGITAL IC · RTL → GDSII", title="Edge-AI ASIC Accelerator",
@@ -71,16 +60,6 @@ CARDS = {
         metrics=[("2", "platforms (iOS/Android)"), ("3", "OAuth providers"), ("FTS", "global search")],
         stack="Expo Router · Redux Toolkit · Supabase", accent="teal"),
 }
-
-TOOLKIT = [
-    ("Silicon", "amber", ["SystemVerilog", "Verilog", "VHDL", "Yosys", "OpenROAD", "OpenLane",
-                          "Magic", "Netgen", "NGSpice", "SKY130", "Cadence"]),
-    ("Devices", "amber", ["DEVSIM", "TCAD", "LTspice", "PSPICE", "MATLAB", "NumPy", "Pandas"]),
-    ("Embedded", "amber", ["C / C++", "Arduino", "ESP32", "ESP8266", "KiCad", "Oscilloscope"]),
-    ("Software", "teal", ["TypeScript", "Python", "C#", "Next.js", "React Native", ".NET",
-                          "FastAPI", "Supabase", "Firebase", "Docker", "Git"]),
-    ("AI", "teal", ["LangChain", "LangGraph", "RAG", "pgvector", "scikit-learn"]),
-]
 
 # ---------------------------------------------------------------- helpers
 
@@ -172,35 +151,6 @@ def hero(c):
     return svg(W, H, "".join(b), f'{HERO["name"]}: {HERO["tagline"]}', pulse_css(c))
 
 
-# ---------------------------------------------------------------- stack
-
-
-def stack(c):
-    W, rowh, gap, top = 1200, 62, 12, 104
-    H = top + len(LAYERS) * (rowh + gap) + 20
-    b = [f'<rect x="1" y="1" width="{W-2}" height="{H-2}" rx="18" fill="{c["panel"]}" stroke="{c["border"]}"/>',
-         f'<text x="48" y="58" font-family="{SANS}" font-size="28" font-weight="700" fill="{c["text"]}">One stack, electrons to agents</text>',
-         f'<text x="48" y="84" font-family="{SANS}" font-size="16" fill="{c["muted"]}">Each layer is something I have built on, and each builds on the one below.</text>']
-    rail_x = 80
-    y_first = top + rowh / 2
-    y_last = top + (len(LAYERS) - 1) * (rowh + gap) + rowh / 2
-    b.append(f'<line x1="{rail_x}" y1="{y_first}" x2="{rail_x}" y2="{y_last}" stroke="{c["border"]}" stroke-width="2"/>')
-    b.append(f'<path class="pulse" d="M{rail_x},{y_last} V{y_first}" stroke="{c["teal"]}" stroke-width="3"/>')
-    for idx, (name, detail, metric) in enumerate(reversed(LAYERS)):
-        level = len(LAYERS) - 1 - idx
-        col = lerp_hex(c["amber"], c["teal"], level / (len(LAYERS) - 1))
-        y = top + idx * (rowh + gap)
-        mid = y + rowh / 2
-        b.append(f'<rect x="112" y="{y}" width="{W-160}" height="{rowh}" rx="12" fill="{c["bg"]}" stroke="{c["border"]}"/>')
-        b.append(f'<rect x="112" y="{y}" width="6" height="{rowh}" rx="3" fill="{col}"/>')
-        b.append(f'<circle cx="{rail_x}" cy="{mid}" r="9" fill="{c["panel"]}" stroke="{col}" stroke-width="2.5"/>')
-        b.append(f'<text x="140" y="{mid+6}" font-family="{MONO}" font-size="15" fill="{c["muted"]}">L{level}</text>')
-        b.append(f'<text x="184" y="{mid+7}" font-family="{SANS}" font-size="20" font-weight="700" fill="{c["text"]}">{e(name)}</text>')
-        b.append(f'<text x="320" y="{mid+6}" font-family="{SANS}" font-size="16" fill="{c["muted"]}">{e(detail)}</text>')
-        b.append(f'<text x="{W-72}" y="{mid+6}" text-anchor="end" font-family="{MONO}" font-size="15" font-weight="700" fill="{col}">{e(metric)}</text>')
-    return svg(W, H, "".join(b), "Stack from physics to AI agents", pulse_css(c))
-
-
 # ---------------------------------------------------------------- cards
 
 
@@ -223,33 +173,111 @@ def card(c, d):
     return svg(W, H, "".join(b), f'{d["title"]}: {d["desc"]}')
 
 
-# ---------------------------------------------------------------- toolkit
+# ---------------------------------------------------------------- typing line
+
+TYPED = [
+    "> based in Multan, Pakistan",
+    "> designing low-power silicon on SKY130",
+    "> modelling MOSFETs from first principles",
+    "> shipping full-stack apps & AI agents",
+]
 
 
-def toolkit(c):
-    W, pad_l, chip_h, row_gap = 1200, 190, 36, 14
-    rows, y = [], 96
-    for name, accent, items in TOOLKIT:
-        x, first_y, placed = pad_l, y, []
-        for it in items:
-            w = text_w(it, 15) + 26
-            if x + w > W - 40:
-                x, y = pad_l, y + chip_h + 10
-            placed.append((x, y, w, it))
-            x += w + 10
-        rows.append((name, accent, first_y, placed))
-        y += chip_h + row_gap + 10
-    H = y + 14
-    b = [f'<rect x="1" y="1" width="{W-2}" height="{H-2}" rx="18" fill="{c["panel"]}" stroke="{c["border"]}"/>',
-         f'<text x="48" y="58" font-family="{SANS}" font-size="28" font-weight="700" fill="{c["text"]}">Toolkit</text>']
-    for name, accent, ry, placed in rows:
-        col = c[accent]
-        b.append(f'<text x="48" y="{ry+24}" font-family="{MONO}" font-size="15" font-weight="700" fill="{col}">{e(name)}</text>')
-        for x, cy, w, it in placed:
-            b.append(f'<rect x="{x:.0f}" y="{cy}" width="{w:.0f}" height="{chip_h}" rx="8" fill="{c["bg"]}" stroke="{c["border"]}"/>')
-            b.append(f'<text x="{x + w/2:.0f}" y="{cy+23}" text-anchor="middle" font-family="{SANS}" font-size="15" fill="{c["text"]}">{e(it)}</text>')
-    return svg(W, H, "".join(b), "Toolkit: silicon, devices, embedded, software and AI tools")
+def typing(c):
+    W, H, size = 900, 50, 26
+    cw = size * 0.6
+    per_char, hold, erase = 0.055, 1.8, 0.35
+    slots = [len(t) * per_char + hold + erase for t in TYPED]
+    T = sum(slots)
+    b, start = [], 0.0
+    for i, line in enumerate(TYPED):
+        n = len(line)
+        w_full = n * cw
+        x = (W - w_full) / 2
+        # discrete keyframes: (time_s, visible_chars)
+        frames = [(0.0, 0)]
+        frames += [(start + k * per_char, k) for k in range(1, n + 1)]
+        t_erase = start + n * per_char + hold
+        steps = 6
+        frames += [(t_erase + j * erase / steps, round(n * (1 - j / steps))) for j in range(1, steps + 1)]
+        frames = sorted({round(t / T, 5): v for t, v in frames}.items())
+        kt = ";".join(f"{t:g}" for t, _ in frames)
+        widths = ";".join(f"{v * cw:.1f}" for _, v in frames)
+        cursor = ";".join(f"{x + v * cw:.1f}" for _, v in frames)
+        on = ";".join("1" if start <= t * T < start + slots[i] - 1e-6 else "0" for t, _ in frames)
+        anim = f'dur="{T:.2f}s" repeatCount="indefinite" calcMode="discrete" keyTimes="{kt}"'
+        b.append(f'<clipPath id="c{i}"><rect x="{x:.1f}" y="0" height="{H}" width="0">'
+                 f'<animate attributeName="width" values="{widths}" {anim}/></rect></clipPath>')
+        b.append(f'<g opacity="0"><animate attributeName="opacity" values="{on}" {anim}/>'
+                 f'<text x="{x:.1f}" y="35" textLength="{w_full:.1f}" lengthAdjust="spacing" '
+                 f'font-family="{MONO}" font-size="{size}" fill="{c["teal"]}" clip-path="url(#c{i})">{e(line)}</text>'
+                 f'<rect x="{x:.1f}" y="12" width="3" height="28" fill="{c["teal"]}">'
+                 f'<animate attributeName="x" values="{cursor}" {anim}/></rect></g>')
+        start += slots[i]
+    return svg(W, H, "".join(b), " / ".join(t.lstrip("> ") for t in TYPED))
 
+
+# ---------------------------------------------------------------- tech row
+
+ICON_DIR = Path(__file__).resolve().parent / "icons"
+
+# Hand-drawn stroke glyphs (24x24) for tools simple-icons does not cover.
+GLYPHS = {
+    "hdl": "M8 7 3 12l5 5M16 7l5 5-5 5M14 4l-4 16",
+    "chip": "M7 7h10v10H7zM10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4",
+    "wave": "M2 12c2.5-8 5.5-8 8 0s5.5 8 8 0 2 0 4 0",
+}
+
+# (label, simple-icons slug or glyph name, accent)
+TECH = [
+    [("SystemVerilog", "hdl"), ("Verilog", "hdl"), ("VHDL", "hdl"), ("Yosys", "chip"), ("OpenROAD", "chip"),
+     ("OpenLane", "chip"), ("Magic", "chip"), ("Netgen", "chip"), ("SKY130", "chip")],
+    [("NGSpice", "wave"), ("LTspice", "wave"), ("DEVSIM", "wave"), ("MATLAB", "mathworks"), ("Cadence", "chip"),
+     ("Arduino", "arduino"), ("ESP32", "espressif"), ("KiCad", "kicad"), ("C++", "cplusplus")],
+    [("Python", "python"), ("TypeScript", "typescript"), ("C#", "csharp"), (".NET", "dotnet"), ("React", "react"),
+     ("Next.js", "nextdotjs"), ("Expo", "expo"), ("FastAPI", "fastapi"), ("Node.js", "nodedotjs")],
+    [("LangChain", "langchain"), ("Supabase", "supabase"), ("PostgreSQL", "postgresql"), ("Redis", "redis"),
+     ("Firebase", "firebase"), ("Docker", "docker"), ("Git", "git"), ("Linux", "linux"), ("NumPy", "numpy")],
+]
+TECH_ACCENT = ["amber", "amber", "teal", "teal"]
+
+
+def icon(slug, x, y, size, col):
+    s = size / 24
+    if slug in GLYPHS:
+        return (f'<path transform="translate({x:.1f} {y:.1f}) scale({s:.3f})" d="{GLYPHS[slug]}" fill="none" '
+                f'stroke="{col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>')
+    raw = (ICON_DIR / f"{slug}.svg").read_text()
+    d = raw.split(' d="', 1)[1].split('"', 1)[0]
+    return f'<path transform="translate({x:.1f} {y:.1f}) scale({s:.3f})" d="{d}" fill="{col}"/>'
+
+
+def tech(c):
+    W, row_h, isz, gap, fs = 1100, 42, 20, 26, 16
+    H = len(TECH) * row_h + 12
+    b = []
+    for r, row in enumerate(TECH):
+        col = c[TECH_ACCENT[r]]
+        widths = [isz + 7 + len(lbl) * fs * 0.58 for lbl, _ in row]
+        x = (W - sum(widths) - gap * (len(row) - 1)) / 2
+        y = 10 + r * row_h
+        for (lbl, slug), w in zip(row, widths):
+            b.append(icon(slug, x, y, isz, col))
+            b.append(f'<text x="{x + isz + 7:.1f}" y="{y + 16}" font-family="{SANS}" font-size="{fs}" '
+                     f'fill="{c["text"]}">{e(lbl)}</text>')
+            x += w + gap
+    labels = ", ".join(lbl for row in TECH for lbl, _ in row)
+    return svg(W, H, "".join(b), f"Tech: {labels}")
+
+
+# ---------------------------------------------------------------- link icons
+
+LINK_COLOR = "#14b8a6"  # mid teal, readable on both GitHub themes
+LINK_ICONS = {
+    "globe": "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM2 12h20M12 2c2.8 3 4 6.5 4 10s-1.2 7-4 10c-2.8-3-4-6.5-4-10s1.2-7 4-10z",
+    "mail": "M3 6h18v12H3zM3 7l9 6 9-6",
+    "pen": "M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4",
+}
 
 # ---------------------------------------------------------------- main
 
@@ -258,10 +286,16 @@ def main():
     OUT.mkdir(exist_ok=True)
     for theme, c in THEMES.items():
         (OUT / f"hero-{theme}.svg").write_text(hero(c), encoding="utf-8")
-        (OUT / f"stack-{theme}.svg").write_text(stack(c), encoding="utf-8")
-        (OUT / f"toolkit-{theme}.svg").write_text(toolkit(c), encoding="utf-8")
+        (OUT / f"typing-{theme}.svg").write_text(typing(c), encoding="utf-8")
+        (OUT / f"tech-{theme}.svg").write_text(tech(c), encoding="utf-8")
         for key, d in CARDS.items():
             (OUT / f"card-{key}-{theme}.svg").write_text(card(c, d), encoding="utf-8")
+    (OUT / "icons").mkdir(exist_ok=True)
+    for name, d in LINK_ICONS.items():
+        (OUT / "icons" / f"{name}.svg").write_text(
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" '
+            f'fill="none" stroke="{LINK_COLOR}" stroke-width="2" stroke-linecap="round" '
+            f'stroke-linejoin="round"><path d="{d}"/></svg>\n', encoding="utf-8")
     print("wrote", len(list(OUT.glob("*.svg"))), "SVGs to", OUT)
 
 

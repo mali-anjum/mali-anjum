@@ -173,6 +173,41 @@ def card(c, d):
     return svg(W, H, "".join(b), f'{d["title"]}: {d["desc"]}')
 
 
+# ---------------------------------------------------------------- audience tracks
+
+TRACKS = {
+    "silicon": dict(
+        label="FOR RECRUITERS · IC DESIGN", title="Silicon & semiconductors", accent="amber",
+        points=["Analog/mixed-signal and digital ASIC design",
+                "RTL → GDSII on SKY130 · SPICE · layout · DRC/LVS",
+                "Semiconductor device physics and TCAD modelling"],
+        cta="Open to IC design roles & graduate programs →"),
+    "software": dict(
+        label="FOR CLIENTS · FREELANCE", title="Software & AI agents", accent="teal",
+        points=["Web apps with Next.js, React, Node.js and FastAPI",
+                "Cross-platform mobile apps with React Native & Expo",
+                "AI agents, RAG and automation with LangChain"],
+        cta="Freelancing since 2023 · let's build yours →"),
+}
+
+
+def track(c, d):
+    W, H = 600, 300
+    col = c[d["accent"]]
+    b = [f'<clipPath id="r"><rect x="1" y="1" width="{W-2}" height="{H-2}" rx="16"/></clipPath>',
+         f'<rect x="1" y="1" width="{W-2}" height="{H-2}" rx="16" fill="{c["panel"]}" stroke="{c["border"]}"/>',
+         f'<rect x="1" y="1" width="{W-2}" height="5" fill="{col}" clip-path="url(#r)"/>',
+         f'<text x="32" y="48" font-family="{MONO}" font-size="15" letter-spacing="1" fill="{col}">{e(d["label"])}</text>',
+         f'<text x="32" y="90" font-family="{SANS}" font-size="30" font-weight="700" fill="{c["text"]}">{e(d["title"])}</text>']
+    for i, pt in enumerate(d["points"]):
+        y = 136 + i * 36
+        b.append(f'<rect x="32" y="{y-11}" width="9" height="9" rx="2" fill="{col}"/>')
+        b.append(f'<text x="54" y="{y}" font-family="{SANS}" font-size="18" fill="{c["muted"]}">{e(pt)}</text>')
+    b.append(f'<line x1="32" y1="232" x2="{W-32}" y2="232" stroke="{c["border"]}"/>')
+    b.append(f'<text x="32" y="266" font-family="{SANS}" font-size="18" font-weight="700" fill="{col}">{e(d["cta"])}</text>')
+    return svg(W, H, "".join(b), f'{d["title"]}: {"; ".join(d["points"])}. {d["cta"]}')
+
+
 # ---------------------------------------------------------------- typing line
 
 TYPED = [
@@ -230,16 +265,20 @@ GLYPHS = {
 
 # (label, simple-icons slug or glyph name, accent)
 TECH = [
+    [("C", "c"), ("C++", "cplusplus"), ("Python", "python"), ("TypeScript", "typescript"), ("JavaScript", "javascript"),
+     ("C#", "csharp"), (".NET", "dotnet"), ("Git", "git"), ("Linux", "linux")],
     [("SystemVerilog", "hdl"), ("Verilog", "hdl"), ("VHDL", "hdl"), ("Yosys", "chip"), ("OpenROAD", "chip"),
      ("OpenLane", "chip"), ("Magic", "chip"), ("Netgen", "chip"), ("SKY130", "chip")],
     [("NGSpice", "wave"), ("LTspice", "wave"), ("DEVSIM", "wave"), ("MATLAB", "mathworks"), ("Cadence", "chip"),
-     ("Arduino", "arduino"), ("ESP32", "espressif"), ("KiCad", "kicad"), ("C++", "cplusplus")],
-    [("Python", "python"), ("TypeScript", "typescript"), ("C#", "csharp"), (".NET", "dotnet"), ("React", "react"),
-     ("Next.js", "nextdotjs"), ("Expo", "expo"), ("FastAPI", "fastapi"), ("Node.js", "nodedotjs")],
-    [("LangChain", "langchain"), ("Supabase", "supabase"), ("PostgreSQL", "postgresql"), ("Redis", "redis"),
-     ("Firebase", "firebase"), ("Docker", "docker"), ("Git", "git"), ("Linux", "linux"), ("NumPy", "numpy")],
+     ("KiCad", "kicad"), ("Arduino", "arduino"), ("ESP32", "espressif"), ("NumPy", "numpy")],
+    [("React", "react"), ("React Native", "react"), ("Next.js", "nextdotjs"), ("Expo", "expo"), ("Redux", "redux"),
+     ("Tailwind CSS", "tailwindcss"), ("Socket.IO", "socketdotio"), ("Stripe", "stripe")],
+    [("Node.js", "nodedotjs"), ("Express", "express"), ("FastAPI", "fastapi"), ("Prisma", "prisma"),
+     ("PostgreSQL", "postgresql"), ("MongoDB", "mongodb"), ("Redis", "redis"), ("Supabase", "supabase"), ("Firebase", "firebase")],
+    [("LangChain", "langchain"), ("OpenAI", "openai"), ("Docker", "docker"), ("GitHub Actions", "githubactions"),
+     ("Vercel", "vercel"), ("Jest", "jest"), ("Sentry", "sentry")],
 ]
-TECH_ACCENT = ["amber", "amber", "teal", "teal"]
+TECH_ACCENT = ["text", "amber", "amber", "teal", "teal", "teal"]
 
 
 def icon(slug, x, y, size, col):
@@ -277,6 +316,7 @@ LINK_ICONS = {
     "globe": "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM2 12h20M12 2c2.8 3 4 6.5 4 10s-1.2 7-4 10c-2.8-3-4-6.5-4-10s1.2-7 4-10z",
     "mail": "M3 6h18v12H3zM3 7l9 6 9-6",
     "pen": "M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4",
+    "briefcase": "M3 7h18v13H3zM8 7V4h8v3M3 13h18",
 }
 
 # ---------------------------------------------------------------- main
@@ -287,6 +327,8 @@ def main():
     for theme, c in THEMES.items():
         (OUT / f"hero-{theme}.svg").write_text(hero(c), encoding="utf-8")
         (OUT / f"typing-{theme}.svg").write_text(typing(c), encoding="utf-8")
+        for key, d in TRACKS.items():
+            (OUT / f"track-{key}-{theme}.svg").write_text(track(c, d), encoding="utf-8")
         (OUT / f"tech-{theme}.svg").write_text(tech(c), encoding="utf-8")
         for key, d in CARDS.items():
             (OUT / f"card-{key}-{theme}.svg").write_text(card(c, d), encoding="utf-8")

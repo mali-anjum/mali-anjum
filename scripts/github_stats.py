@@ -1,4 +1,4 @@
-"""Generate assets/stats-{dark,light}.svg from live GitHub contribution data.
+"""Generate assets/stats-{dark,light}.svg (contribution numbers and streaks) from live GitHub data.
 
 Run by .github/workflows/stats.yml on a schedule. Locally:  python3 scripts/github_stats.py
 Needs a token in GH_TOKEN or GITHUB_TOKEN (falls back to `gh auth token`).
@@ -10,7 +10,7 @@ import subprocess
 import urllib.request
 from datetime import date, datetime, timedelta, timezone
 
-from build_assets import MONO, OUT, SANS, THEMES, e, lerp_hex, svg
+from build_assets import MONO, OUT, SANS, THEMES, svg
 
 USER = "mali-anjum"
 
@@ -23,15 +23,12 @@ query($login: String!, $from: DateTime!, $to: DateTime!) {
       totalPullRequestContributions
       contributionCalendar {
         totalContributions
-        weeks { contributionDays { date contributionCount contributionLevel } }
+        weeks { contributionDays { date contributionCount } }
       }
     }
   }
 }
 """
-
-LEVELS = ["NONE", "FIRST_QUARTILE", "SECOND_QUARTILE", "THIRD_QUARTILE", "FOURTH_QUARTILE"]
-
 
 def token():
     t = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
@@ -82,7 +79,6 @@ def fetch():
         prs=cc["totalPullRequestContributions"],
         active=sum(1 for w in weeks for d in w["contributionDays"] if d["contributionCount"]),
         all_total=sum(days.values()),
-        weeks=weeks,
         **streaks(days),
     )
 
@@ -124,8 +120,7 @@ FLAME = ("M12 2c1 3 4 4.5 4 8.5A4 4 0 0 1 8 10.5c0-1.6.8-2.8 1.6-3.6.2 1.4 1 2.1
 
 
 def render(c, s):
-    W, H = 1200, 500
-    ramp = [c["faint"]] + [lerp_hex(c["faint"], c["teal"], t) for t in (0.35, 0.6, 0.82, 1.0)]
+    W, H = 1200, 256
     b = [f'<rect x="1" y="1" width="{W-2}" height="{H-2}" rx="18" fill="{c["panel"]}" stroke="{c["border"]}"/>']
 
     # left: last-12-months numbers
@@ -158,30 +153,6 @@ def render(c, s):
     b.append(f'<text x="{cx}" y="{cy+76}" text-anchor="middle" font-family="{SANS}" font-size="15" font-weight="700" fill="{c["teal"]}">Current streak</text>')
     b.append(f'<text x="{cx}" y="{cy+100}" text-anchor="middle" font-family="{SANS}" font-size="13" fill="{c["muted"]}">{rng(s["cur_range"])}</text>')
 
-    # heatmap
-    cell, step = 16, 20.5
-    weeks = s["weeks"][-53:]
-    x0 = (W - (len(weeks) * step - (step - cell))) / 2
-    y0 = 290
-    last_month = None
-    for wi, w in enumerate(weeks):
-        first = w["contributionDays"][0]["date"]
-        m = first[5:7]
-        if m != last_month and wi < len(weeks) - 2:
-            b.append(f'<text x="{x0 + wi*step:.1f}" y="{y0-12}" font-family="{SANS}" font-size="13" fill="{c["muted"]}">{date.fromisoformat(first).strftime("%b")}</text>')
-            last_month = m
-        for d in w["contributionDays"]:
-            dow = (date.fromisoformat(d["date"]).weekday() + 1) % 7  # Sunday = 0, like GitHub
-            fill = ramp[LEVELS.index(d["contributionLevel"])]
-            b.append(f'<rect x="{x0 + wi*step:.1f}" y="{y0 + dow*step:.1f}" width="{cell}" height="{cell}" rx="3.5" fill="{fill}"/>')
-    yl = y0 + 7 * step + 26
-    b.append(f'<text x="{x0:.1f}" y="{yl+12}" font-family="{SANS}" font-size="14" fill="{c["muted"]}">{s["year_total"]:,} contributions in the last year</text>')
-    xr = W - x0 - 5 * step - 42
-    b.append(f'<text x="{xr-8:.1f}" y="{yl+12}" text-anchor="end" font-family="{SANS}" font-size="13" fill="{c["muted"]}">Less</text>')
-    for i, f in enumerate(ramp):
-        b.append(f'<rect x="{xr + i*step:.1f}" y="{yl}" width="{cell}" height="{cell}" rx="3.5" fill="{f}"/>')
-    b.append(f'<text x="{xr + 5*step + 4:.1f}" y="{yl+12}" font-family="{SANS}" font-size="13" fill="{c["muted"]}">More</text>')
-
     title = (f'{s["year_total"]:,} contributions in the last year, {s["all_total"]:,} total, '
              f'current streak {s["cur"]} days, longest {s["longest"]} days')
     return svg(W, H, "".join(b), title)
@@ -191,7 +162,7 @@ def main():
     stats = fetch()
     for theme, c in THEMES.items():
         (OUT / f"stats-{theme}.svg").write_text(render(c, stats), encoding="utf-8")
-    print({k: v for k, v in stats.items() if k != "weeks"})
+    print(stats)
 
 
 if __name__ == "__main__":

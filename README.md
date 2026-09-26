@@ -135,11 +135,9 @@ I'm a physics graduate (BS Physics, BZU Multan, CGPA 3.61) working on both sides
 
 > *I'm an explorer by nature. Physics taught me to ask **why**. Engineering taught me to **build** the answer.*
 
-- 🧭 **Curiosity is my default setting.** Every field I work in, from devices and circuits to chips, software and agents, started with one question: *how does this actually work?* I keep going until I can build it myself.
-- 🚶 **I think best on long walks.** I carry a hard problem out the door and walk until it untangles. The desk is only for writing the answer down.
-- 🕊️ **I watch how birds fly.** Lift, drag and a few grams of muscle outperform most of what we engineer for efficiency. I still want to know exactly how.
-- 🌌 **I look up at the night sky.** The electromagnetism that moves charge through a transistor also carries starlight across light-years to your eyes.
-- 🏃 **I run.** Distance teaches what engineering keeps confirming: steady effort beats bursts.
+- 🧭 **Curiosity is what drives me, and hard problems are where I have the most fun.** Every field I work in, from devices and circuits to chips, software and agents, started with one question: *how does this actually work?* I keep going until I can build it myself.
+- 🚶 **I think best on long walks and runs.** I take a hard problem out the door and bring the answer back. Distance also teaches what engineering keeps confirming: steady effort beats bursts.
+- 🕊️ **I look up a lot.** I watch birds and wonder how a few grams of muscle outfly our best efficiency engineering. I watch the night sky, where the electromagnetism that moves charge through a transistor carries starlight to our eyes.
 - 📚 **I read books and poetry.** Books widen the map. Poetry trains me to notice what others walk past.
 - ✍️ **I teach what I learn.** On [my blog](https://alianjum.vercel.app/) I help student developers pick up full-stack skills, because explaining something is the real test of understanding it.
 

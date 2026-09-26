@@ -121,31 +121,31 @@ FLAME = ("M12 2c1 3 4 4.5 4 8.5A4 4 0 0 1 8 10.5c0-1.6.8-2.8 1.6-3.6.2 1.4 1 2.1
 
 
 def render(c, s):
-    W, H = 1200, 256
+    W, H = 1200, 280
     b = [f'<rect x="1" y="1" width="{W-2}" height="{H-2}" rx="18" fill="{c["panel"]}" stroke="{c["border"]}"/>']
 
     # left: last-12-months numbers
-    b.append(f'<rect x="24" y="24" width="560" height="208" rx="14" fill="{c["bg"]}" stroke="{c["border"]}"/>')
-    b.append(f'<text x="52" y="62" font-family="{MONO}" font-size="14" font-weight="700" letter-spacing="2" fill="{c["amber"]}">GITHUB · LAST 12 MONTHS</text>')
-    b.append(f'<rect x="52" y="72" width="36" height="3" rx="1.5" fill="{c["amber"]}"/>')
+    b.append(f'<rect x="24" y="24" width="560" height="232" rx="14" fill="{c["bg"]}" stroke="{c["border"]}"/>')
+    b.append(f'<text x="52" y="65" font-family="{MONO}" font-size="14" font-weight="700" letter-spacing="2" fill="{c["amber"]}">GITHUB · LAST 12 MONTHS</text>')
+    b.append(f'<rect x="52" y="75" width="36" height="3" rx="1.5" fill="{c["amber"]}"/>')
     cells = [(s["year_total"], "CONTRIBUTIONS"), (s["commits"], "COMMITS"),
              (s["prs"], "PULL REQUESTS"), (s["active"], "ACTIVE DAYS")]
     for i, (v, lbl) in enumerate(cells):
-        x, y = 52 + (i % 2) * 270, 128 + (i // 2) * 76
+        x, y = 52 + (i % 2) * 270, 129 + (i // 2) * 74
         b.append(f'<text x="{x}" y="{y}" font-family="{SANS}" font-size="36" font-weight="700" fill="{c["text"]}">{v:,}</text>')
         b.append(f'<text x="{x}" y="{y+22}" font-family="{MONO}" font-size="12" letter-spacing="1.5" fill="{c["muted"]}">{lbl}</text>')
 
     # right: streaks
-    b.append(f'<rect x="604" y="24" width="572" height="208" rx="14" fill="{c["bg"]}" stroke="{c["border"]}"/>')
+    b.append(f'<rect x="604" y="24" width="572" height="232" rx="14" fill="{c["bg"]}" stroke="{c["border"]}"/>')
     cols = [(700, f'{s["all_total"]:,}', "Total contributions", f'{fmt_day(s["created"], True)} – Present'),
             (1080, f'{s["longest"]}', "Longest streak", rng(s["longest_range"]))]
     for x, v, lbl, sub in cols:
-        b.append(f'<text x="{x}" y="120" text-anchor="middle" font-family="{SANS}" font-size="34" font-weight="700" fill="{c["text"]}">{v}</text>')
-        b.append(f'<text x="{x}" y="156" text-anchor="middle" font-family="{SANS}" font-size="15" fill="{c["text"]}">{lbl}</text>')
-        b.append(f'<text x="{x}" y="182" text-anchor="middle" font-family="{SANS}" font-size="13" fill="{c["muted"]}">{sub}</text>')
+        b.append(f'<text x="{x}" y="132" text-anchor="middle" font-family="{SANS}" font-size="34" font-weight="700" fill="{c["text"]}">{v}</text>')
+        b.append(f'<text x="{x}" y="168" text-anchor="middle" font-family="{SANS}" font-size="15" fill="{c["text"]}">{lbl}</text>')
+        b.append(f'<text x="{x}" y="194" text-anchor="middle" font-family="{SANS}" font-size="13" fill="{c["muted"]}">{sub}</text>')
     for x in (795, 985):
-        b.append(f'<line x1="{x}" y1="56" x2="{x}" y2="200" stroke="{c["border"]}"/>')
-    cx, cy, r = 890, 104, 46
+        b.append(f'<line x1="{x}" y1="68" x2="{x}" y2="212" stroke="{c["border"]}"/>')
+    cx, cy, r = 890, 116, 46
     circ = 2 * 3.14159 * r
     b.append(f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="none" stroke="{c["teal"]}" stroke-width="6" '
              f'stroke-dasharray="{circ-34:.1f} 34" transform="rotate({-90+ (34/circ)*180:.2f} {cx} {cy})" stroke-linecap="round"/>')

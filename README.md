@@ -15,6 +15,8 @@
 <p align="center">
   <a href="https://alianjum.vercel.app/"><img src="assets/icons/globe.svg" width="16" height="16" alt=""> <b>Website</b></a>
   &nbsp;&nbsp;
+  <a href="https://www.linkedin.com/in/mali-anjum/"><img src="assets/icons/linkedin.svg" width="16" height="16" alt=""> <b>LinkedIn</b></a>
+  &nbsp;&nbsp;
   <a href="https://alianjum.vercel.app/"><img src="assets/icons/pen.svg" width="16" height="16" alt=""> <b>Blog</b></a>
   &nbsp;&nbsp;
   <a href="mailto:muhammadaliabbas7890@outlook.com"><img src="assets/icons/mail.svg" width="16" height="16" alt=""> <b>Email</b></a>
@@ -34,7 +36,7 @@ I'm a physics graduate (BS Physics, BZU Multan, CGPA 3.61) working on both sides
 <table>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://alianjum.vercel.app/">
+      <a href="https://www.linkedin.com/in/mali-anjum/">
       <picture>
         <source media="(prefers-color-scheme: dark)" srcset="assets/track-silicon-dark.svg">
         <img alt="For recruiters: silicon and semiconductors. Open to IC design roles and graduate programs." src="assets/track-silicon-light.svg" width="100%">

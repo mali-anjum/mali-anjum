@@ -1,6 +1,6 @@
 """Generate assets/stats-{dark,light}.svg (contribution numbers and streaks) from live GitHub data.
 
-Run by .github/workflows/stats.yml on a schedule. Locally:  python3 scripts/github_stats.py
+Run by .github/workflows/stats.yml on a schedule, which publishes to the `output` branch. Locally:  python3 scripts/github_stats.py
 Needs a token in GH_TOKEN or GITHUB_TOKEN (falls back to `gh auth token`).
 """
 
@@ -9,6 +9,7 @@ import os
 import subprocess
 import urllib.request
 from datetime import date, datetime, timedelta, timezone
+from pathlib import Path
 
 from build_assets import MONO, OUT, SANS, THEMES, svg
 
@@ -160,8 +161,10 @@ def render(c, s):
 
 def main():
     stats = fetch()
+    out = Path(os.environ.get("STATS_OUT", OUT))  # CI writes to dist/ for the output branch
+    out.mkdir(parents=True, exist_ok=True)
     for theme, c in THEMES.items():
-        (OUT / f"stats-{theme}.svg").write_text(render(c, stats), encoding="utf-8")
+        (out / f"stats-{theme}.svg").write_text(render(c, stats), encoding="utf-8")
     print(stats)
 
 

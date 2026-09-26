@@ -1,12 +1,15 @@
 name: Update GitHub stats and snake
 
+# Generated images go to the `output` branch (force-pushed, single commit),
+# so main's history only contains real changes.
+
 on:
   schedule:
     - cron: "17 */6 * * *"
   workflow_dispatch:
   push:
     branches: [main]
-    paths: [scripts/github_stats.py, scripts/build_assets.py]
+    paths: [scripts/github_stats.py, scripts/build_assets.py, .github/workflows/stats.yml]
 
 permissions:
   contents: write
@@ -22,6 +25,7 @@ jobs:
       - name: Generate stats SVGs
         run: python scripts/github_stats.py
         env:
+          STATS_OUT: dist
           # Add a STATS_TOKEN secret (classic PAT, read:user) to count private contributions too.
           GH_TOKEN: ${{ secrets.STATS_TOKEN || secrets.GITHUB_TOKEN }}
       - name: Generate contribution snake
@@ -29,11 +33,13 @@ jobs:
         with:
           github_user_name: mali-anjum
           outputs: |
-            assets/snake-dark.svg?palette=github-dark&color_snake=#f5b14c&color_dots=#161b22,#0e4a44,#15766b,#1fa592,#2dd4bf
-            assets/snake-light.svg?color_snake=#b45309&color_dots=#ebedf0,#a7e3da,#5cc4b3,#1a9e8c,#0f766e
-      - name: Commit if changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/stats-*.svg assets/snake-*.svg
-          git diff --cached --quiet || { git commit -m "Update GitHub stats and snake"; git push; }
+            dist/snake-dark.svg?palette=github-dark&color_snake=#f5b14c&color_dots=#161b22,#0e4a44,#15766b,#1fa592,#2dd4bf
+            dist/snake-light.svg?color_snake=#b45309&color_dots=#ebedf0,#a7e3da,#5cc4b3,#1a9e8c,#0f766e
+      - name: Publish to output branch
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: output
+          build_dir: dist
+          commit_message: Update GitHub stats and snake
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
